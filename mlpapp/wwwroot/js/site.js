@@ -2,6 +2,11 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
+
+var dadosNormalizados = [];
+
+var classes = [];
+
 $(function () {
     
     $("#btn-treinar").click(function(){
@@ -14,33 +19,33 @@ $(function () {
         
         var interacao = $("#input-interacao").val();
         
-        var erro = $("#input-erro").val();
+        var erro = parseFloat($("#input-erro").val());
         
         var aprendizagem = $("#input-aprendizagem").val()/100;
         
         var funcao = $("input[name='funcao-transf']:checked").val();
         
-        if(oculta === undefined || oculta === null || oculta === "") {
+        if(oculta === undefined || oculta === "0" || oculta === "") {
             alert("Preencha a camada oculta");
             return;
         }
 
-        if(interacao === undefined || interacao === null || interacao === "") {
+        if(interacao === undefined || interacao === "0" || interacao === "") {
             alert("Preencha a quantidade de interacoes");
             return;
         }
 
-        if(erro === undefined || erro === null || erro === "") {
+        if(erro === undefined || erro === "0" || erro === "") {
             alert("Preencha o campo erro");
             return;
         }
 
-        if(aprendizagem === undefined || aprendizagem === null || aprendizagem === "" || aprendizagem === 0) {
+        if(aprendizagem === undefined || aprendizagem === 0) {
             alert("Preencha o campo taxa de aprendizagem");
             return;
         }
 
-        if(funcao === undefined || funcao === null || funcao === "") {
+        if(funcao === undefined || funcao === "0" || funcao === "") {
             alert("Preencha a funcao de transferencia");
             return;
         }
@@ -48,11 +53,13 @@ $(function () {
         $.ajax({
             url: "/Home/Treinar",
             type: "POST",
-            data: { entrada: entrada, saida: saida, oculta: oculta, interacao: interacao, erro: erro, aprendizagem: aprendizagem, funcao: funcao}
+            data: { entrada: entrada, saida: saida, oculta: oculta, interacao: interacao, erro: erro, aprendizagem: aprendizagem, funcao: funcao,
+                    normalizacao: JSON.stringify(dadosNormalizados), classes: classes}
         })
         .done(function(data) {
             if(!data.hasOwnProperty("erro")) {
-                
+                plot(data.errosEpoca);
+                alert("Rede treinada!");
             }
             else {
                 alert(data.erro);
@@ -79,6 +86,8 @@ $(function () {
             type: 'POST',
             success: function (data) {
                 if(!data.hasOwnProperty("erro")) {
+                    dadosNormalizados = [];
+                    classes = data.clas;
                     tabelaCsv(data);
                     
                     var qtde = quantidadeClasses(data.clas); 
@@ -135,21 +144,24 @@ function tabelaCsv(data) {
     }
 
     html += "</tr></thead><tbody>";
-    
     for (var j = 1; j < dados.length - 1; j++){
         
         html += "<tr>";
         var valores = dados[j].split(",");
-        
+        var vet = [];
+        var valor;
         for (var k = 0; k < valores.length; k++) {
             
             if (k === valores.length - 1) {
                 html += "<td>"+ classes[j] +"</td>"
             }
             else {
-                html += "<td>"+ trunc((valores[k] - resultados[k*3+1])/resultados[k*3+2]) +"</td>"
+                valor = trunc((valores[k] - resultados[k*3+1])/resultados[k*3+2]);
+                html += "<td>"+ valor +"</td>";
+                vet.push(valor);
             }
         } 
+        dadosNormalizados.push(vet);
         html += "</tr>"
     } 
     
@@ -162,4 +174,49 @@ function trunc(n) {
     var t=n.toString();
     var regex=/(\d*.\d{0,3})/;
     return t.match(regex)[0];
+}
+
+
+function plot(data) {
+    var label = [];
+    var ctx = document.getElementById("grafico-treinamento");
+    for (var i = 0; i < data.length; i++) {
+        label.push("Época "+ i);
+    } 
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: label,
+            datasets: [{
+                label: 'Erro médio',
+                data: data,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255,99,132,1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+    });
 }

@@ -24,16 +24,14 @@ namespace mlpapp.Models
      */
     public class Neuronio
     {
-        private double[] entradas_in;
-        private double[] pesos_entradas;
-        private int num_entradas;
-        private double NET, erro;
-        private int tipo_saida;
-
-        private bool modoTeste;
-        
-        //dados de saida
-        public double i, derivada;
+        public double[] entradas { get; set; }
+        public double[] pesosEntradas { get; set; }
+        public int numEntradas { get; set; }
+        public double net { get; set; }
+        public double erro { get; set; }
+        public int tipoSaida { get; set; }    
+        public double i { get; set; }
+        public double derivada { get; set; }
 
         /*
          * TIPOS DE SAIDA
@@ -41,87 +39,82 @@ namespace mlpapp.Models
          * 2 - LOGÍSTICA
          * 3 - HIPERBÓLICA
          */
-        public Neuronio(int tipo_de_saida)
+        public Neuronio(int tipoSaida)
         {
-            this.tipo_saida = tipo_de_saida;
+            this.tipoSaida = tipoSaida;
             this.i = 0;
             this.derivada = 0;
             this.erro = 0;
-            this.entradas_in = null;
-            this.pesos_entradas = null;
-            this.num_entradas = 0;
-            this.NET = 0;
-            this.modoTeste = false;
-        }
-
-        public void isTeste(bool s)
-        {
-            this.modoTeste = s;
+            this.entradas = null;
+            this.pesosEntradas = null;
+            this.numEntradas = 0;
+            this.net = 0;
         }
 
         public void reiniciarNeuronioParaTeste()
         {
             this.derivada = 0;
             this.i = 0;
-            this.entradas_in = null;
+            this.entradas = null;
             this.erro = 0;
-            this.num_entradas = 0;
-            this.NET = 0;
+            this.numEntradas = 0;
+            this.net = 0;
         }
 
-        public void setEntradas(double[] entradas)
+        public void setEntradas(string[] entradas, bool primeiraVez)
         {
-            num_entradas = entradas.Length;
+            numEntradas = entradas.Length;
             Random randNum = new Random();
 
-            if (modoTeste == false)
+            this.entradas = new double[numEntradas];
+
+            if (primeiraVez)
             {
-                entradas_in = new double[num_entradas];
-                pesos_entradas = new double[num_entradas];
-                for (int i = 0; i < num_entradas; i++)
+                pesosEntradas = new double[numEntradas];
+                for (int i = 0; i < numEntradas; i++)
                 {
-                    entradas_in[i] = entradas[i];
-                    pesos_entradas[i] = randNum.Next(-2, 2);
+                    this.entradas[i] = Convert.ToDouble(entradas[i]);
+                    pesosEntradas[i] = randNum.Next(-2, 2);
                 }
             }
             else
             {
-                entradas_in = new double[num_entradas];
-                for (int i = 0; i < num_entradas; i++)
+                for (int i = 0; i < numEntradas; i++)
                 {
-                    entradas_in[i] = entradas[i];
+                    this.entradas[i] = Convert.ToDouble(entradas[i]);
                 }
             }
 
+
             //faz os calculos
-            funcao_ativacao();
-            funcao_propagacao();
-            calcularDerivada();
+            FuncaoAtivacao();
+            FuncaoPropagacao();
+            CalcularDerivada();
         }
 
-        private void funcao_ativacao() 
+        private void FuncaoAtivacao() 
         {
-            this.NET = 0;
-            for (int i = 0; i < num_entradas; i++)
+            this.net = 0;
+            for (int i = 0; i < numEntradas; i++)
             {
-                this.NET += this.entradas_in[i] * this.pesos_entradas[i];
+                this.net += this.entradas[i] * this.pesosEntradas[i];
             }
         }
 
-        private void funcao_propagacao()
+        private void FuncaoPropagacao()
         {
-            switch (this.tipo_saida)
+            switch (this.tipoSaida)
             { 
-                case 1://linerar
-                    this.i = this.NET / 10; 
+                case 1://linear
+                    this.i = this.net / 10; 
                 break;
 
                 case 2://logistica
-                    this.i = 1 / (1 + Math.Pow(Math.E, -this.NET));
+                    this.i = 1 / (1 + Math.Pow(Math.E, -this.net));
                 break;
 
                 case 3://hiperbolica
-                    this.i = (1 - Math.Pow(Math.E, (-2) * this.NET)) / (1 + Math.Pow(Math.E, (-2) * this.NET));
+                    this.i = (1 - Math.Pow(Math.E, (-2) * this.net)) / (1 + Math.Pow(Math.E, (-2) * this.net));
                 break;
             }
         }
@@ -139,54 +132,39 @@ namespace mlpapp.Models
          * Ex: neuronio1 = (erro do neuronio de saida1 * peso do neuronio1 oculto e o neuronio de saida1) +
          *     (erro do neuronio de saida2 * peso do neuronio1 oculto e o neuronio de saida2) ...
          */
-        private void calcularDerivada() 
+        private void CalcularDerivada() 
         {
-            switch (this.tipo_saida)
+            switch (this.tipoSaida)
             {
-                case 1://linerar
+                case 1://linear
                     this.derivada = 0.1;
                 break;
 
                 case 2://logistica
                     //this.derivada = this.i * (1 - this.i);
-                    this.derivada = this.NET * (1 - this.NET);
+                    this.derivada = this.net * (1 - this.net);
                 break;
 
                 case 3://hiperbolica
                     //this.derivada = 1 - Math.Pow(this.i, 2);
-                    this.derivada = 1 - Math.Pow(this.NET, 2);
+                    this.derivada = 1 - Math.Pow((1 - Math.Pow(Math.E, (-2) * this.net)) / (1 + Math.Pow(Math.E, (-2) * this.net)), 2);
                 break;
             }
         }
-
-        public void setErro(double erro)
+        
+        public double GetEntrada(int x)
         {
-            this.erro = erro;
+            return this.entradas[x];
         }
 
-        public double getErro()
-        {
-            return this.erro;
+        public double GetPeso(int x)
+        { 
+            return this.pesosEntradas[x];
         }
 
-        public int getNumEntradas()
+        public void SetPeso(int x, double novoPeso)
         {
-            return this.num_entradas;
-        }
-
-        public double getEntrada(int n)
-        {
-            return this.entradas_in[n];
-        }
-
-        public double getPeso(int n)
-        {
-            return this.pesos_entradas[n];
-        }
-
-        public void setPeso(int n, double novoPeso)
-        {
-            this.pesos_entradas[n] = novoPeso;
+            this.pesosEntradas[x] = novoPeso;
         }
     }
 }
