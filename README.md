@@ -1,2 +1,2 @@
 # mlpApp
-multi-layer propagation app in asp net core
+multi-layer perceptron app in asp net core
