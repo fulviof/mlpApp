@@ -7,6 +7,8 @@ var dadosNormalizados = [];
 
 var classes = [];
 
+var grafico;
+
 $(function () {
     
     $("#btn-treinar").click(function(){
@@ -178,45 +180,40 @@ function trunc(n) {
 
 
 function plot(data) {
+    
+    if(grafico !== undefined || grafico != null)
+        grafico.destroy();
+    
     var label = [];
-    var ctx = document.getElementById("grafico-treinamento");
+    var cores = [];
     for (var i = 0; i < data.length; i++) {
         label.push("Época "+ i);
-    } 
-    var myChart = new Chart(ctx, {
+        cores.push('rgba(54, 150, 255, 0.5)');
+    }
+    var config = {
         type: 'bar',
         data: {
-            labels: label,
             datasets: [{
-                label: 'Erro médio',
+                label: "Erro médio",
                 data: data,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
+                backgroundColor: cores,
+                borderColor: cores,
                 borderWidth: 1
-            }]
+            }],
+            labels: label
         },
         options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero:true
-                    }
-                }]
+            resposive: true,
+            legend: {
+                display: true
+            },
+            tooltips: {
+                enabled: true
             }
         }
-    });
+    };
+
+    var g = document.getElementById("grafico-treinamento");
+    grafico = new Chart(g, config);
+    
 }

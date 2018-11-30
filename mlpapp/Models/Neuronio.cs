@@ -110,7 +110,7 @@ namespace mlpapp.Models
                 break;
 
                 case 2://logistica
-                    this.i = 1 / (1 + Math.Pow(Math.E, -this.net));
+                    this.i = 1 / (1 + Math.Pow(Math.E, (this.net*(-1))));
                 break;
 
                 case 3://hiperbolica
@@ -142,7 +142,7 @@ namespace mlpapp.Models
 
                 case 2://logistica
                     //this.derivada = this.i * (1 - this.i);
-                    this.derivada = this.net * (1 - this.net);
+                    this.derivada = 1 / (1 + Math.Pow(Math.E, (this.net*(-1)))) * (1 - 1 / (1 + Math.Pow(Math.E, (this.net*(-1)))));
                 break;
 
                 case 3://hiperbolica
