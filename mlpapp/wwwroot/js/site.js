@@ -51,7 +51,7 @@ $(function () {
             alert("Preencha a funcao de transferencia");
             return;
         }
-        
+        loadingState();
         $.ajax({
             url: "/Home/Treinar",
             type: "POST",
@@ -60,16 +60,20 @@ $(function () {
         })
         .done(function(data) {
             if(!data.hasOwnProperty("erro")) {
+                removeLoadingState();
+                $("#nav-testar-tab").removeClass("disabled");
+                $(".chart-container").show();
                 plot(data.errosEpoca);
-                alert("Rede treinada!");
             }
             else {
+                removeLoadingState();
                 alert(data.erro);
             }
         })
-            .fail(function(data){
-                alert("Erro ao processar solicitacao");
-            })
+        .fail(function(data){
+            removeLoadingState();
+            alert("Erro ao processar solicitacao");
+        })
         
     });
 
@@ -128,6 +132,20 @@ function quantidadeClasses(classes) {
     } 
     
     return valores.length - 1;
+}
+
+function loadingState(length) {
+    
+    $('#animacao').show('fast');
+    $('#btn-treinar').addClass('disabled');
+    $('#btn-treinar')[0].innerText = 'Treinando...';
+}
+
+function removeLoadingState() {
+    
+    $('#animacao').hide('fast');
+    $('#btn-treinar').removeClass('disabled');
+    $('#btn-treinar')[0].innerText = 'Treinar';
 }
 
 

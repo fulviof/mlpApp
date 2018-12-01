@@ -22,8 +22,6 @@
         <e p="Models" t="Include">
           <e p="ErrorViewModel.cs" t="Include" />
           <e p="Neuronio.cs" t="Include" />
-          <e p="ThreadTestar.cs" t="Include" />
-          <e p="ThreadTreinar.cs" t="Include" />
         </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
@@ -55,6 +53,8 @@
         </e>
         <e p="wwwroot" t="Include">
           <e p="css" t="Include">
+            <e p="loading-btn.css" t="Include" />
+            <e p="loading.css" t="Include" />
             <e p="site.css" t="Include" />
             <e p="site.min.css" t="Include" />
           </e>
