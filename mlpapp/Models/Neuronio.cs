@@ -42,7 +42,7 @@ namespace mlpapp.Models
                 for (int i = 0; i < numEntradas; i++)
                 {
                     this.entradas[i] = Convert.ToDouble(entradas[i]);
-                    pesosEntradas[i] = randNum.Next(-2, 2);
+                    pesosEntradas[i] = randNum.Next(-1, 1) + randNum.NextDouble();
                 }
             }
             else
@@ -56,6 +56,24 @@ namespace mlpapp.Models
             FuncaoAtivacao();
             FuncaoPropagacao();
             CalcularDerivada();
+        }
+        
+        public void setEntradasPesos(string[] entradas, double[] pesos)
+        {
+            numEntradas = entradas.Length;
+            Random randNum = new Random();
+
+            this.entradas = new double[numEntradas];
+            this.pesosEntradas = new double[pesos.Length];
+            
+            for (int i = 0; i < numEntradas; i++)
+            {
+                this.entradas[i] = Convert.ToDouble(entradas[i]);
+                pesosEntradas[i] = pesos[i];
+            }
+            
+            FuncaoAtivacao();
+            FuncaoPropagacao();
         }
 
         private void FuncaoAtivacao() 

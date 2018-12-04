@@ -5,14 +5,13 @@ using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using mlpapp.Models;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
 namespace mlpapp.Controllers
 {
     public class HomeController : Controller
     {
-        public List<string[]> normalizados;//tirar o calculo do js e deixar no metodo Normalizar para facilitar
-        
         public IActionResult Index()
         {
             return View();
@@ -98,7 +97,7 @@ namespace mlpapp.Controllers
         }
 
         [HttpPost]
-        public IActionResult Treinar(int entrada, int saida, int oculta, int interacao, float erro, float aprendizagem, int funcao, string normalizacao, string[] classes)
+        public IActionResult Treinar(int entrada, int saida, int oculta, int interacao, double erro, double aprendizagem, int funcao, string normalizacao, string[] classes)
         {
             try
             {
@@ -215,13 +214,123 @@ namespace mlpapp.Controllers
                     epoch++;
                 }
                 while (epoch < interacao && aux > erro) ;
-
-                return Json(new {errosEpoca = errosPorEpoca});
+                
+                return Json(new {errosEpoca = errosPorEpoca, neuroniosSaida = neuroniosSaida, neuroniosOculta = neuroniosOculta});
             }
             catch (Exception e)
             {
                 return Json(new {erro = e.Message});
             }
+        }
+
+        [HttpPost]
+        public IActionResult CarregaArquivoTeste()
+        {
+            var file = HttpContext.Request.Form.Files[0];        
+            var result = string.Empty;
+            using (var reader = new StreamReader(file.OpenReadStream()))
+            {
+                result = reader.ReadToEnd();  
+            }
+
+            var list = result.Split("\r\n");
+            
+            var colunas = list[0].Split(",");
+                
+            var vetorResultados = new int[(colunas.Length - 1)*3];
+
+            var classes = new int[list.Length - 1];
+
+            for (var i = 1; i < list.Length - 1; i++)
+            {
+                var linha = list[i].Split(",");
+                classes.SetValue(Convert.ToInt32(linha[linha.Length-1]), i-1);
+            }
+                
+            for (var i = 0; i<colunas.Length - 1; i++)
+            {              
+                var maior = -999999;
+                var menor = 999999;   
+                for (var j = 1; j < list.Length - 1; j++)
+                {
+                    var linha = list[j].Split(",");
+                        
+                    if(Convert.ToInt32(linha[i]) > maior)
+                        maior = Convert.ToInt32(linha[i]);
+                        
+                    if(Convert.ToInt32(linha[i]) < menor)
+                        menor = Convert.ToInt32(linha[i]);
+                }
+
+                vetorResultados.SetValue(maior, i*3);
+                vetorResultados.SetValue(menor, i*3+1);
+                vetorResultados.SetValue(maior-menor, i*3+2);
+            }
+            
+            return Json(new {dados = list, resultados = vetorResultados, clas = classes, qtde = colunas.Length - 1});
+        }
+        
+        [HttpPost]
+        public IActionResult Testar(string normalizacao, string classes, string neuroniosSaida, string neuroniosOculta, int saida)
+        {     
+            var dados = JsonConvert.DeserializeObject<List<string[]>>(normalizacao);
+            var clas = JsonConvert.DeserializeObject<int[]>(classes);
+            var pesosSaida = JsonConvert.DeserializeObject<List<double[]>>(neuroniosSaida);
+            var pesosOculta = JsonConvert.DeserializeObject<List<double[]>>(neuroniosOculta);
+            
+            var qtde = new List<int>();
+            
+            for (int i = 0; i < clas.Length-1; i++)
+            {
+                if (!qtde.Contains(clas[i]))
+                {
+                    qtde.Add(clas[i]);
+                }
+            }
+
+            int[,] matrix = new int[qtde.Count, pesosSaida.Count];
+
+            var neuroOculta = new Neuronio[pesosOculta.Count];
+            var neuroSaida = new Neuronio[pesosSaida.Count];
+            
+            for (int i = 0; i < dados.Count - 1; i++)
+            {
+                var entradasSaida = new string[neuroOculta.Length];   
+                var entradasOculta = dados[i];
+
+                //entradas oculta
+                for (int j = 0; j < neuroOculta.Length; j++)
+                {
+                    neuroOculta[j] = new Neuronio(saida);
+                    neuroOculta[j].setEntradasPesos(entradasOculta, pesosOculta.ElementAt(j)); 
+                }
+
+                for (int j = 0; j < neuroOculta.Length; j++)
+                {
+                    entradasSaida[j] = Convert.ToString(neuroOculta[j].i);
+                }
+                   
+                //insere as entradas na camada de saida com seus pesos
+                for(int j = 0; j < neuroSaida.Length; j++)
+                {
+                    neuroSaida[j] = new Neuronio(saida);
+                    neuroSaida[j].setEntradasPesos(entradasSaida, pesosSaida.ElementAt(j));
+                }
+
+                int maior = 0;
+                
+                for (int j = 1; j < neuroSaida.Length; j++)
+                {
+                    if (neuroSaida[j].i > neuroSaida[maior].i)
+                    {
+                        maior = j;
+                    }
+                }
+
+                matrix[clas[i]-1, maior] += 1;
+            }
+
+            return Json(new {matrix = matrix, linha = qtde.Count, coluna = pesosSaida.Count});
         }
     }
 }
