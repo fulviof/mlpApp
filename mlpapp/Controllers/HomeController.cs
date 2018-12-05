@@ -113,7 +113,18 @@ namespace mlpapp.Controllers
                 
                 var neuroniosSaida = new Neuronio[saida];
                 var neuroniosOculta = new Neuronio[oculta];
+                
+                var qtde = new List<string>();
+            
+                for (int i = 0; i < classes.Length-1; i++)
+                {
+                    if (!qtde.Contains(classes[i]))
+                    {
+                        qtde.Add(classes[i]);
+                    }
+                }
 
+                int[,] matrix = new int[saida, qtde.Count];
                 var errosPorEpoca = new List<double>();
 
                 var listaNormalizada = JsonConvert.DeserializeObject<List<string[]>>(normalizacao);
@@ -125,6 +136,19 @@ namespace mlpapp.Controllers
                     neuroniosSaida[i] = new Neuronio(funcao);
 
                 int epoch = 0;
+
+                for (int i = 0; i < saida; i++)
+                {
+                    for (int j = 0; j < saida; j++)
+                    {
+                        if (i == j)
+                            matrix[i, j] = 1;
+                        else
+                        {
+                            matrix[i, j] = 0;
+                        }
+                    }
+                }
                 
                 do
                 {
@@ -160,7 +184,7 @@ namespace mlpapp.Controllers
                         for(int k = 0; k < neuroniosSaida.Length; k++)
                         {
                             saidaObtida = neuroniosSaida[k].i;
-                            saidaDesejada = Convert.ToInt32(classes[j]);
+                            saidaDesejada = matrix[Convert.ToInt32(classes[j]) - 1, k];
                             derivada = neuroniosSaida[k].derivada;
 
                             erroNeuronio = (saidaDesejada - saidaObtida) * derivada;
@@ -285,6 +309,17 @@ namespace mlpapp.Controllers
                 if (!qtde.Contains(clas[i]))
                 {
                     qtde.Add(clas[i]);
+                }
+            }
+
+            foreach (string[] a in dados)
+            {
+                for (int i = 0; i < a.Length; i++)
+                {
+                    if (a[i] == "N")
+                    {
+                        a[i] = "0";
+                    }
                 }
             }
 

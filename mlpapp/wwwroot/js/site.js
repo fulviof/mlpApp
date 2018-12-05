@@ -173,7 +173,7 @@ $(function () {
                         for (var k = 0; k < valores.length; k++) {
                             
                             if(k !== valores.length -1) {
-                                valor = (valores[k] - resultados[k * 3 + 1]) / resultados[k * 3 + 2];
+                                valor = trunc((valores[k] - resultados[k * 3 + 1]) / resultados[k * 3 + 2]);
                                 vet.push(valor);
                             }
                         }
