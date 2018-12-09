@@ -98,7 +98,7 @@ namespace mlpapp.Models
                 break;
 
                 case 3:
-                    this.i = (1 - Math.Pow(Math.E, (-2) * this.net)) / (1 + Math.Pow(Math.E, (-2) * this.net));
+                    this.i = Math.Tanh(this.net);
                 break;
             }
         }
@@ -116,7 +116,7 @@ namespace mlpapp.Models
                 break;
 
                 case 3:
-                    this.derivada = 1 - Math.Pow((1 - Math.Pow(Math.E, (-2) * this.net)) / (1 + Math.Pow(Math.E, (-2) * this.net)), 2);
+                    this.derivada = 1 - (Math.Pow(Math.Tanh(net), 2));
                 break;
             }
         }

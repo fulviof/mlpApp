@@ -2,20 +2,38 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="alert alert-primary" role="alert">
+@*<div class="alert alert-primary" role="alert">
     Os arquivos utlizados devem estar em formato .csv parametrizados por vírgula, sendo a classe o último 
     parâmetro, e com a última linha vazia.
-</div>
+</div>*@
 
 <nav>
     <div class="nav nav-tabs" id="nav-tab" role="tablist">
-        <a class="nav-item nav-link active" id="nav-normalizar-tab" data-toggle="tab" href="#nav-normalizar" role="tab" aria-controls="nav-normalizar" aria-selected="true">Normalizar</a>
-        <a class="nav-item nav-link disabled" id="nav-treinar-tab" data-toggle="tab" href="#nav-treinar" role="tab"  aria-controls="nav-treinar" aria-selected="false">Treinar</a>
+        <a class="nav-item nav-link active" id="nav-instrucoes-tab" data-toggle="tab" href="#nav-instrucoes" role="tab" aria-controls="nav-instrucoes" aria-selected="true">Início</a>
+        <a class="nav-item nav-link" id="nav-normalizar-tab" data-toggle="tab" href="#nav-normalizar" role="tab" aria-controls="nav-normalizar" aria-selected="true">Normalizar</a>
+        <a class="nav-item nav-link disabled" id="nav-treinar-tab" data-toggle="tab" href="#nav-treinar" role="tab" aria-controls="nav-treinar" aria-selected="false">Treinar</a>
         <a class="nav-item nav-link disabled" id="nav-testar-tab" data-toggle="tab" href="#nav-testar" role="tab" aria-controls="nav-testar" aria-selected="false">Testar</a>
     </div>
 </nav>
 <div class="tab-content" id="nav-tabContent">
-    <div class="tab-pane fade show active" id="nav-normalizar" role="tabpanel" aria-labelledby="nav-normalizar-tab">
+    <div class="tab-pane fade show active" id="nav-instrucoes" role="tabpanel" aria-labelledby="nav-instrucoes-tab">
+        <div class="jumbotron" style="background-color: white">
+            <h1 class="display-4">Multilayer perceptron</h1>
+            <p class="lead">A perceptron multicamadas (MLP) é uma rede neural semelhante à perceptron, mas com mais de uma camada de neurônios em alimentação direta. Tal tipo de rede é composta por camadas de neurônios ligadas entre si por sinapses com pesos. O aprendizado nesse tipo de rede é geralmente feito através do algoritmo de retro-propagação do erro.</p>
+            <hr class="my-4">
+            <h3>Instruções</h3>
+            <p class="lead">Os arquivos utlizados devem estar em formato .csv parametrizados por vírgula, sendo a classe o último 
+                parâmetro, e com a última linha vazia.</p>
+            <p class="lead">Arquivos de exemplo:</p>
+            <ul>
+                <li><a href="https://mega.nz/#!NJBw0axL!nTOzht7h04ozg5E9vjlbWypgeOIKNrIUJtkzEvUPDdM">Treinamento</a></li>
+                <li><a href="https://mega.nz/#!QMJABA5Y!gZgsFYYsGCu0LdYmKARPOOXU-qPT3VCoRdcn8M5z_l0">Teste</a></li>
+            </ul>     
+            <p class="lead" style="margin-top: 5%">&copy; 2018 - mlpapp</p>
+            
+        </div>
+    </div>
+    <div class="tab-pane fade show" id="nav-normalizar" role="tabpanel" aria-labelledby="nav-normalizar-tab">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -28,12 +46,12 @@
                                 <input type="text" class="form-control" readonly="" id="fileInput">
                                 <div class="input-group-append">
                                     <span class="btn btn-outline-primary">
-                                        <label class="input-group-btn" style="margin: 0 auto">                                    
-                                            Procurar… <input type="file" style="display: none;" name="file" id="fileUpload">                                   
+                                        <label class="input-group-btn" style="margin: 0 auto">
+                                            Procurar… <input type="file" style="display: none;" name="file" id="fileUpload">
                                         </label>
                                     </span>
                                 </div>
-                            </div>                   
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -42,7 +60,7 @@
         <div class="row justify-content-around">
             <div class="col-sm-12">
                 <table id="tabela-csv" class="table table-responsive table-hover">
-            
+
                 </table>
             </div>
         </div>
@@ -56,11 +74,11 @@
                         <label class="control-label col-sm-12" for="input-entrada">Camada de entrada:
                             <input id="input-entrada" type="text" class="form-control" disabled="disabled"></input>
                         </label>
-                        
+
                         <label class="control-label col-sm-12" for="input-saida">Camada de saída:
                             <input id="input-saida" type="text" class="form-control" disabled="disabled"></input>
                         </label>
-                        
+
                         <label class="control-label col-sm-12" for="input-oculta">Camada oculta:
                             <input id="input-oculta" type="text" class="form-control"></input>
                         </label>
@@ -72,22 +90,22 @@
                         <label class="control-label col-sm-12" for="input-intercao">Iterações:
                             <input type="text" id="input-interacao" class="form-control">
                         </label>
-                        
+
                         <label class="control-label col-sm-12" for="input-erro">Erro:
                             <input type="text" id="input-erro" class="form-control">
-                        </label>     
+                        </label>
                     </div>
                 </div>
-                
+
                 <div class="card" style="width: 16rem;">
                     <div class="card-body">
                         <h5 class="card-title">Taxa de aprendizagem</h5>
                         <label class="control-label col-sm-12" for="input-interacao">N(%):
-                            <input id="input-aprendizagem" type="text" class="form-control" ></input>
+                            <input id="input-aprendizagem" type="text" class="form-control"></input>
                         </label>
                     </div>
                 </div>
-        
+
                 <div class="card" style="width: 16rem;">
                     <div class="card-body">
                         <h5 class="card-title">Função de transferência</h5>
@@ -108,15 +126,15 @@
                             <label class="form-check-label" for="rd-hiper">
                                 Hiperbólica
                             </label>
-                        </div>  
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="row justify-content-center" style="margin-top: 3%">
                 <div class="col-sm-6">
-                    <label class="control-label col-sm-12" for="input-arq-treino">Arquivo: 
+                    <label class="control-label col-sm-12" for="input-arq-treino">Arquivo:
                         <input class="form-control" type="text" id="input-arq-treino" disabled="disabled"></input>
-                    </label>      
+                    </label>
                 </div>
                 <div class="col-sm-2" style="margin-top: 1.5em">
                     <button class="btn btn-outline-primary col-sm-12" id="btn-treinar">Treinar</button>
@@ -137,16 +155,16 @@
                 </div>
             </div>-->
             <div class="wrapper" id="animacao-treinamento">
-                <svg id="animacao" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 288 288" style="width: 10%;display: none">
+                <svg id="animacao" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 288 288" style="width: 10%; display: none">
                     <linearGradient id="PSgrad_0" x1="70.711%" x2="0%" y1="70.711%" y2="0%">
-                        <stop offset="0%" stop-color="rgb(95,70,255)" stop-opacity="1" />
-                        <stop offset="100%" stop-color="rgb(50,255,255)" stop-opacity="1" />
+                        <stop offset="0%" stop-color="rgb(95,70,255)" stop-opacity="1"/>
+                        <stop offset="100%" stop-color="rgb(50,255,255)" stop-opacity="1"/>
                     </linearGradient>
                     <path fill="url(#PSgrad_0)">
 
-                        <animate  repeatCount="indefinite" attributeName="d" dur="5s"
-	
-                                  values="M37.5,186c-12.1-10.5-11.8-32.3-7.2-46.7c4.8-15,13.1-17.8,30.1-36.7C91,68.8,83.5,56.7,103.4,45
+                        <animate repeatCount="indefinite" attributeName="d" dur="5s"
+
+                                 values="M37.5,186c-12.1-10.5-11.8-32.3-7.2-46.7c4.8-15,13.1-17.8,30.1-36.7C91,68.8,83.5,56.7,103.4,45
 	c22.2-13.1,51.1-9.5,69.6-1.6c18.1,7.8,15.7,15.3,43.3,33.2c28.8,18.8,37.2,14.3,46.7,27.9c15.6,22.3,6.4,53.3,4.4,60.2
 	c-3.3,11.2-7.1,23.9-18.5,32c-16.3,11.5-29.5,0.7-48.6,11c-16.2,8.7-12.6,19.7-28.2,33.2c-22.7,19.7-63.8,25.7-79.9,9.7
 	c-15.2-15.1,0.3-41.7-16.6-54.9C63,186,49.7,196.7,37.5,186z;
@@ -167,35 +185,35 @@
                 </svg>
             </div>
         </div>
-        
-        <div class="chart-container col-sm-12" style="position: relative; height:40vh; width: 80vw; display:none">
+
+        <div class="chart-container col-sm-12" style="position: relative; height: 40vh; width: 80vw; display: none">
             <canvas id="grafico-treinamento">
-            
+
             </canvas>
         </div>
     </div>
     <div class="tab-pane fade" id="nav-testar" role="tabpanel" aria-labelledby="nav-testar-tab">
         <div class="row justify-content-center" style="margin-top: 3%">
-        <label class="control-label col-sm-7">Arquivo de teste:
-            <div class="form-group">
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" readonly="" id="fileInput-teste">
-                    <div class="input-group-append">
-                        <span class="btn btn-outline-primary">
-                            <label class="input-group-btn" style="margin: 0 auto">                                    
-                                Procurar… <input type="file" style="display: none;" name="file" id="fileUpload-teste">                                   
-                            </label>
-                        </span>
+            <label class="control-label col-sm-7">Arquivo de teste:
+                <div class="form-group">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" readonly="" id="fileInput-teste">
+                        <div class="input-group-append">
+                            <span class="btn btn-outline-primary">
+                                <label class="input-group-btn" style="margin: 0 auto">
+                                    Procurar… <input type="file" style="display: none;" name="file" id="fileUpload-teste">
+                                </label>
+                            </span>
+                        </div>
                     </div>
-                </div>                   
-            </div>
-        </label>
+                </div>
+            </label>
         </div>
         <div class="row justify-content-center">
             <div class="col-sm-5">
-                <label class="control-label col-sm-12" style="margin-left: -1em;" for="input-arq-treino">Arquivo de treinamento: 
+                <label class="control-label col-sm-12" style="margin-left: -1em;" for="input-arq-treino">Arquivo de treinamento:
                     <input class="form-control" type="text" id="input-arq-treino-teste" disabled="disabled"></input>
-                </label>      
+                </label>
             </div>
             <div class="form-group col-sm-2" style="margin-top: 1.5em;">
                 <button class="form-control btn btn-outline-primary" id="btn-testar">Testar</button>
@@ -204,7 +222,7 @@
         <div class="row justify-content-around" style="margin-top: 5%">
             <div class="col-sm-9">
                 <table id="matrix" class="table table-responsive table-hover">
-            
+
                 </table>
             </div>
         </div>
